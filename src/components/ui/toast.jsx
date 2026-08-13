@@ -10,7 +10,7 @@ const toast = ToastPrimitive.createToastManager()
 function ToastProvider({
   ...props
 }) {
-  return <ToastPrimitive.Provider {...props} />;
+  return <ToastPrimitive.Provider timeout={2000} {...props} />;
 }
 
 function ToastPortal({

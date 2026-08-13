@@ -8,44 +8,69 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+
+
+
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/toast"
 import { useEffect } from 'react'
 import { useState } from 'react'
 
-function Project({ namaBarang, harga, deskripsi }) {
+function Project({ namaBarang, harga, deskripsi  }) {
 
     const [keranjang, setKeranjang] = useState(0);
+    
+    const [statusAksi, setStatusAksi] = useState(null);
 
     const isPenuh = keranjang >= 10
 
-    const tambahKeranjang = (e) => {
-        e.preventDefault();
+    const tambahKeranjang = () => {
+        if (keranjang >= 10) return
         setKeranjang((prev) => prev + 1)
-        
+        setStatusAksi("tambah")
     };
 
-    const kurangKeranjang = (e) => {
-        e.preventDefault();
+    const kurangKeranjang = () => {
+        if (keranjang <= 0) return
         setKeranjang((prev) => prev - 1)
+        setStatusAksi("kurang")
     };
 
     useEffect(() => {
-        if (keranjang > 10) {
+
+    if (statusAksi === null) return;
+    
+    if (keranjang >= 10) {
+      toast.add({
+        title: "Keranjang Penuh",
+        description: `${namaBarang} tidak dapat dimasukkan ke dalam keranjang (pembelian barang ini max. 10 items)`,
+        duration: 2000
+      });
+    } else if (keranjang === 0) {
+      toast.add({
+        title: "Keranjang Kosong",
+        description: `${namaBarang} telah dihapus dari keranjang`,
+        duration: 2000
+      });
+    } else if (statusAksi === "tambah") {
         toast.add({
-            title: "Keranjang Penuh",
-            description: "Keranjang sudah penuh (Maksimal 10)",
-        });
-        } else {
+        title: "Keranjang",
+        description: `${namaBarang} dimasukkan ke dalam keranjang (${keranjang})`,
+        duration: 2000
+      });
+    } else if (statusAksi === "kurang") {
         toast.add({
-            title: "Keranjang",
-            description: `${namaBarang} dimasukkan kedalam keranjang (${keranjang})`,
-        });
-        }
-  }, [keranjang]);
+        title: "Keranjang",
+        description: `${namaBarang} dikeluarkan dari dalam keranjang (${keranjang})`,
+        duration: 2000
+      });
+    }
+      
+    
+  }, [keranjang, statusAksi]);
 
   return (
-    <section className="flex min-h-screen justify-center align-center items-center">
+    <section className="relative flex flex-col min-h-screen justify-center align-center items-center">
         <Card className="flex w-100 align-center p-0">
             <div className="relative aspect-video w-full overflow-hidden">
                 <div className="absolute inset-0 z-10 bg-black/35" />
@@ -55,15 +80,17 @@ function Project({ namaBarang, harga, deskripsi }) {
                     className="h-full w-full object-cover grayscale dark:brightness-40"
                 />
             </div>
-            <CardHeader className="gap-8">
+            <CardHeader className="gap-8 flex flex-col">
                 <CardTitle>{namaBarang}</CardTitle>
-                <CardDescription className="-mb-(--card-spacing)">
-                    <div className="-mx-(--card-spacing) w-96 max-h-48 space-y-4 overflow-y-scroll border-t bg-muted/50 px-(--card-spacing) py-4 text-sm leading-relaxed">{deskripsi}</div>
-                </CardDescription>
-                <CardAction className="-ml-100">
+                
+                <CardAction className="flex gap-4">
                     <Button variant="outline" onClick={tambahKeranjang}>Tambah Keranjang</Button>
+                    <Button variant="outline" onClick={kurangKeranjang}>Kurang Keranjang</Button>
                 </CardAction>
             </CardHeader>
+            <CardDescription className="-mb-(--card-spacing)">
+                <div className="w-96 max-h-48 space-y-4 overflow-y-scroll border-t bg-muted/50 px-(--card-spacing) py-4 text-sm leading-relaxed">{deskripsi}</div>
+            </CardDescription>
             <CardContent className="mt-8">
                 <p>{harga}</p>
             </CardContent>
@@ -72,7 +99,7 @@ function Project({ namaBarang, harga, deskripsi }) {
             </CardFooter>
         </Card>
 
-
+        {isPenuh && <p className="absolute bottom-10 text-red-500 text-center mt-8">Pembelian maximum 10 Unit per Akun</p>}
     </section>
     
   )
