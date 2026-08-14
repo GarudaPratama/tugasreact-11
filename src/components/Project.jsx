@@ -16,7 +16,7 @@ import { toast } from "@/components/ui/toast"
 import { useEffect } from 'react'
 import { useState } from 'react'
 
-function Project({ namaBarang, harga, deskripsi  }) {
+function Project({ namaBarang, harga, deskripsi }) {
 
     const [keranjang, setKeranjang] = useState(0);
     
@@ -44,25 +44,25 @@ function Project({ namaBarang, harga, deskripsi  }) {
       toast.add({
         title: "Keranjang Penuh",
         description: `${namaBarang} tidak dapat dimasukkan ke dalam keranjang (pembelian barang ini max. 10 items)`,
-        duration: 2000
+        
       });
     } else if (keranjang === 0) {
       toast.add({
         title: "Keranjang Kosong",
         description: `${namaBarang} telah dihapus dari keranjang`,
-        duration: 2000
+        
       });
     } else if (statusAksi === "tambah") {
         toast.add({
         title: "Keranjang",
         description: `${namaBarang} dimasukkan ke dalam keranjang (${keranjang})`,
-        duration: 2000
+        
       });
     } else if (statusAksi === "kurang") {
         toast.add({
         title: "Keranjang",
         description: `${namaBarang} dikeluarkan dari dalam keranjang (${keranjang})`,
-        duration: 2000
+        
       });
     }
       
